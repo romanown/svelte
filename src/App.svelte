@@ -11,6 +11,12 @@
     getPage(currentPage);
   });
 
+  $: minPagination = totalPage < 3 ? totalPage : 2;
+  $: maxPagination = totalPage < 5 ? 1 : totalPage - 2;
+  $: middlePagination =
+    maxPagination > currentPage && 3 > currentPage
+      ? maxPagination - 1
+      : currentPage - 1;
   function nextpage() {
     currentPage += 1;
     getPage(currentPage);
@@ -59,8 +65,14 @@
   <p>{recivedData.text}</p>
   <div>Текущея страница: {currentPage + 1}</div>
   <div>
-    {#each Array(totalPage) as _, i}
+    {#each Array(minPagination) as _, i}
       <button on:click={() => getPage(i)}>page{i + 1}</button>
+    {/each}
+
+    {#each Array(totalPage) as _, i}
+      {#if (i > maxPagination) || (i === middlePagination) || (i === middlePagination)}
+        <button on:click={() => getPage(i)}>page{i + 1}</button>
+      {/if}
     {/each}
   </div>
   <div>
